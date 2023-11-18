@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    image: backend-image
+    container_name: backend
+    volumes:
+      - ./backend:/var/www/firstme-app
+    # depends_on:
+    #   - db
+    # environment:
+    #   - FRONT_URI=http://localhost:3000
+    #   - ALLOWED_HOST=localhost
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/var/www/firstme-app
+    ports:
+      - 3000:3000
+    image: frontend-image
+    container_name: frontend
+    depends_on:
+      - backend
+
+  # db:
+  #   image: "postgres:15-alpine"
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     - POSTGRES_PASSWORD=password
+  #     - POSTGRES_DB=db
+  #   volumes:
+  #     - db-store:/var/lib/postgresql/data
+
+# volumes:
+#   db-store:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${VPC_CIDR:-172.41.0.0/16}
